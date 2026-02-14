@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para Nataly 💖</title>
+
+<style>
+:root { --pink:#ff69b4; --deep:#ff1493; }
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    font-family: Arial, sans-serif;
+    touch-action: manipulation;
+}
+
+canvas { position: fixed; inset: 0; }
+
+/* Anillos */
+.anillo {
+    position:absolute;
+    top:50%; left:50%;
+    width:260px; height:260px;
+    border:3px solid var(--pink);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 40px var(--pink);
+    animation:girar 18s linear infinite;
+}
+.anillo.doble {
+    width:300px; height:300px;
+    opacity:.45;
+    animation-duration: 26s;
+}
+
+@keyframes girar {
+    from { transform:translate(-50%,-50%) rotate(0deg); }
+    to { transform:translate(-50%,-50%) rotate(360deg); }
+}
+
+/* Nombre */
+.nombre {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    color:var(--pink);
+    font-size:44px;
+    font-weight:800;
+    text-shadow:0 0 22px var(--pink);
+}
+
+/* Frases */
+.texto {
+    position:absolute;
+    color:#ff7bbf;
+    font-size:15px;
+    text-shadow:0 0 12px var(--deep);
+    animation: flotar 7s ease-in-out infinite;
+    opacity:.95;
+}
+
+@keyframes flotar {
+    0%{transform:translateY(0)}
+    50%{transform:translateY(-18px)}
+    100%{transform:translateY(0)}
+}
+
+/* Órbita peluches */
+.orbita {
+    position:absolute;
+    top:50%; left:50%;
+    width:360px; height:360px;
+    transform:translate(-50%,-50%);
+    animation:girar 22s linear infinite;
+}
+.peluche { position:absolute; font-size:26px; }
+
+/* Corazones */
+.corazon {
+    position:absolute;
+    font-size:18px;
+    animation: subir 1.8s linear forwards;
+}
+@keyframes subir {
+    to { transform:translateY(-70px); opacity:0; }
+}
+
+/* Botón música */
+.play {
+    position:fixed;
+    right:14px; bottom:14px;
+    background:#000a;
+    color:var(--pink);
+    border:1px solid var(--pink);
+    border-radius:999px;
+    padding:10px 14px;
+    box-shadow:0 0 14px var(--pink);
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="galaxia"></canvas>
+
+<div class="anillo"></div>
+<div class="anillo doble"></div>
+<div class="nombre">Nataly 💖</div>
+
+<div class="orbita">
+  <div class="peluche" style="top:-6px;left:50%">🧸💑</div>
+  <div class="peluche" style="top:50%;right:-6px">🧸💑</div>
+  <div class="peluche" style="bottom:-6px;left:50%">🧸💑</div>
+  <div class="peluche" style="top:50%;left:-6px">🧸💑</div>
+</div>
+
+<button class="play" id="play">▶ Música</button>
+<audio id="audio" loop>
+  <source src="https://files.catbox.moe/6r1j2a.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// 🌌 Galaxia + partículas rosadas
+const c = document.getElementById('galaxia');
+const ctx = c.getContext('2d');
+resize(); window.onresize = resize;
+
+let stars=[], pinks=[];
+function resize(){ c.width=innerWidth; c.height=innerHeight; }
+
+for(let i=0;i<420;i++)
+  stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2});
+
+for(let i=0;i<120;i++)
+  pinks.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.6,dy:.2+Math.random()*.4});
+
+(function draw(){
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle='#fff';
+  stars.forEach(s=>{
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+  });
+  ctx.fillStyle='rgba(255,105,180,.6)';
+  pinks.forEach(p=>{
+    p.y+=p.dy; if(p.y>c.height) p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+  });
+  requestAnimationFrame(draw);
+})();
+
+// 💖 FRASES ULTRA ROMÁNTICAS
+[
+ ["Feliz San Valentín, mi amor ❤️","10%","16%"],
+ ["mi reina, desde que llegaste mi mundo es mejor 💖","55%","15%"],
+ [" siempre confio en ti, y te amo se que lograras lo que siempre has querido ✨","6%","70%"],
+ ["Mi corazón es tuyo hoy, mañana y siempre 💘","56%","76%"],
+ ["Eres mi universo, mi paz y mi hogar 🌌","32%","88%"],
+ ["tu eres lo mejor que me ha pasado 💞","18%","40%"],
+ ["Si el amor tuviera nombre, llevaría el tuyo 💗","60%","44%"]
+].forEach(f=>{
+  const d=document.createElement('div');
+  d.className='texto';
+  d.textContent=f[0];
+  d.style.left=f[1];
+  d.style.top=f[2];
+  document.body.appendChild(d);
+});
+
+// 💕 Corazones al tocar
+addEventListener('click',e=>{
+  const h=document.createElement('div');
+  h.className='corazon';
+  h.textContent='💖';
+  h.style.left=e.clientX+'px';
+  h.style.top=e.clientY+'px';
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),1800);
+});
+
+// 🎶 Música
+const audio=document.getElementById('audio');
+document.getElementById('play').onclick=()=>{
+  audio.paused ? audio.play() : audio.pause();
+};
+</script>
+
+</body>
+</html>
